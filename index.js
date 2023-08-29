@@ -11,7 +11,7 @@ app.use(express.json())
 app.use("/instructer",InsturctorauthRouter)
 app.use(auth)
 app.use("/instructerdata",InstructorRouter)
-app.listen(8080,async(req,res)=>{
+app.listen(8080,async()=>{
    try{
 
    await connection

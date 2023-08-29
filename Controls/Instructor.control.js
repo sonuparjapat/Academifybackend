@@ -61,4 +61,37 @@ InstructorRouter.post("/profile",async(req,res)=>{
     }
     
 })
+InstructorRouter.patch("/profile/edit/:id",async(req,res)=>{
+    const {id}=req.params
+    const {instId}=req.body
+    const data=await instructorModel.findOne({_id:id})
+    // console.log(instId,data)
+    try{
+if(req.body.instId==data.instId){
+    await instructorModel.findOneAndUpdate({_id:id},req.body)
+    res.status(200).json({msg:`Instructer with ${id} updated successfully`})
+}else{
+    res.status(400).json({msg:"You are not authorised to do this"})
+}
+    }catch(err){
+        res.status(400).json({"msg":err})
+    }
+})
+
+InstructorRouter.delete("/profile/delete/:id",async(req,res)=>{
+    const {id}=req.params
+    const {instId}=req.body
+    const data=await instructorModel.findOne({_id:id})
+    // console.log(instId,data)
+    try{
+if(req.body.instId==data.instId){
+    await instructorModel.findOneAndDelete({_id:id})
+    res.status(200).json({msg:`Instructer with ${id} deleted successfully`})
+}else{
+    res.status(400).json({msg:"You are not authorised to do this"})
+}
+    }catch(err){
+        res.status(400).json({"msg":err})
+    }
+})
 module.exports={InstructorRouter}
