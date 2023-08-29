@@ -22,7 +22,7 @@ InstructorRouter.get("/instructers",async(req,res)=>{
     }
   
     try{
-       const maindata=await instructorModel.find()
+       const maindata=await instructorModel.find(querydata)
     if(limit&&page){
         const data=await instructorModel.find(querydata).sort({[sort]:order=="asc"?"1":order=="desc"?"-1":""}).skip((page-1)*limit).limit(limit)
         res.status(200).json({msg:data,totalpages:Math.ceil(maindata.length/limit)}) 
