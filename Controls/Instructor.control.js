@@ -1,6 +1,15 @@
 const express=require('express')
 const { instructorModel } = require('../Medels/Instructermodel')
 const InstructorRouter=express.Router()
+InstructorRouter.get("/userprofile",async(req,res)=>{
+    const {instId}=req.body
+    const data=await instructorModel.findOne({_id:instId})
+    try{
+        res.status(200).json({msg:data})
+    }catch(err){
+        res.status(400).json({msg:err})
+    }
+})
 InstructorRouter.get("/instructers",async(req,res)=>{
     const {name,department,mob,gender,email,sort,order,limit,page}=req.query
 //    console.log(req.query)
