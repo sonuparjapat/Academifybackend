@@ -3,12 +3,10 @@ const { instructorModel } = require('../Medels/Instructermodel')
 const InstructorRouter=express.Router()
 InstructorRouter.get("/userprofile",async(req,res)=>{
     const {instId}=req.body
+    console.log(instId)
     const data=await instructorModel.findOne({_id:instId})
-    try{
-        res.status(200).json({msg:data,username:data.name,useremail:data.email,id:data._id})
-    }catch(err){
-        res.status(400).json({msg:err})
-    }
+    console.log(data)
+  res.status(200).json({msg:data})
 })
 InstructorRouter.get("/instructers",async(req,res)=>{
     const {name,department,mob,gender,email,sort,order,limit,page}=req.query
