@@ -5,7 +5,7 @@ InstructorRouter.get("/userprofile",async(req,res)=>{
     const {instId}=req.body
     const data=await instructorModel.findOne({_id:instId})
     try{
-        res.status(200).json({msg:data})
+        res.status(200).json({msg:data,username:data.name,useremail:data.email,id:data._id})
     }catch(err){
         res.status(400).json({msg:err})
     }
