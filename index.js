@@ -7,7 +7,7 @@ const { InstructorRouter } = require('./Controls/Instructor.control')
 const app=express()
 app.use(cors())
 app.use(express.json())
-
+// ||||||||||||||||||||||||||||||||||||||||||||||
 app.use("/instructer",InsturctorauthRouter)
 app.use(auth)
 app.use("/instructerdata",InstructorRouter)
