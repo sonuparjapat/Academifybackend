@@ -4,7 +4,7 @@ const InstructorRouter=express.Router()
 InstructorRouter.get("/userprofile",async(req,res)=>{
     const {instId}=req.body
     console.log(instId)
-    const data=await instructorModel.findOne({"instId":instId})
+    const data=await instructorModel.findOne({"instId":instId })
     console.log(data)
   res.status(200).json({msg:data
 })
