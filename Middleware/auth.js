@@ -6,7 +6,7 @@ if(token){
     try{
     jwt.verify(token.split(" ")[1], 'masai', function(err, decoded) {
     if(decoded){
-        req.body.instId=decoded.instructerId
+        req.body.userId=decoded.userId
         next()
     }else{
         res.status(400).json({msg:"Token expired or wrong token "})

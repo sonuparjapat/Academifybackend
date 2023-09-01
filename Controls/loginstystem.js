@@ -3,11 +3,11 @@ const express=require("express")
 const bcrypt = require('bcrypt');
 const jwt=require("jsonwebtoken")
 
-const { instructorloginmodel } = require("../Medels/InstructorloginModel")
-const InsturctorauthRouter=express.Router()
-InsturctorauthRouter.post("/register",async(req,res)=>{
+const {  loginmodel } = require("../Medels/loginModel")
+const authRouter=express.Router()
+authRouter.post("/register",async(req,res)=>{
     const {email,password,name}=req.body
-    const data=await instructorloginmodel.findOne({email})
+    const data=await loginmodel.findOne({email})
     if(data){
         res.status(400).json({msg:"This User is already registered"})
     }else{
@@ -15,7 +15,7 @@ InsturctorauthRouter.post("/register",async(req,res)=>{
             bcrypt.hash(password, 5, async(err, hash)=> {
                 if(hash&&!err){
 
-                    const data=new instructorloginmodel({email,name,password:hash})
+                    const data=new loginmodel({email,name,password:hash})
                     await data.save()
                     res.status(200).json({msg:"Registered Successfully"})
                 }else{
@@ -28,14 +28,14 @@ res.status(400).json({msg:err})
         }
     }
 })
-InsturctorauthRouter.post("/login",async(req,res)=>{
+authRouter.post("/login",async(req,res)=>{
     const {email,password}=req.body
-    const data=await instructorloginmodel.findOne({email})
+    const data=await loginmodel.findOne({email})
     if(data){
         try{
             bcrypt.compare(password,data.password, function(err, result) {
                if(result){
-                var token = jwt.sign({ instructerId:data._id }, 'masai');
+                var token = jwt.sign({ userId:data._id }, 'masai');
                 
                 res.status(200).json({msg:"Login Successfully",useremail:data.email,"token":token,username:data.name})
                }else{
@@ -49,4 +49,4 @@ res.status(400).json({msg:err})
         res.status(400).json({msg:"Not a Registered User"})
     }
 })
-module.exports={InsturctorauthRouter}
+module.exports={authRouter}

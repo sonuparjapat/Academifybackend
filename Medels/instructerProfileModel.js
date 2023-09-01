@@ -8,9 +8,9 @@ const userSchema=mongoose.Schema({
     email:{type:String,required:true},
     
     date:String,
-    instId:String
+   userId:String
 })
-const instructorModel=mongoose.model("Instructordata",userSchema)
+const instructerProfileModel=mongoose.model("Instructordata",userSchema)
 module.exports={
-    instructorModel
+    instructerProfileModel
 }

@@ -1,16 +1,17 @@
 const express=require('express')
 const cors=require("cors")
 const {auth}=require("./Middleware/auth")
-const {connection}=require("./Medels/InstructorloginModel")
-const { InsturctorauthRouter } = require('./Controls/Instructorlogin')
-const { InstructorRouter } = require('./Controls/Instructor.control')
+const {connection}=require("./Medels/loginModel")
+const { authRouter } = require('./Controls/loginstystem')
+const {  profileRouter } = require('./Controls/controlsystem')
+const { studentProfileRouter } = require('./Controls/StudentProfile.control')
 const app=express()
 app.use(cors())
 app.use(express.json())
 // ||||||||||||||||||||||||||||||||||||||||||||||
-app.use("/instructer",InsturctorauthRouter)
-app.use(auth)
-app.use("/instructerdata",InstructorRouter)
+app.use("/user",authRouter)
+
+app.use("/userdata",auth,profileRouter)
 app.listen(8080,async()=>{
    try{
 
