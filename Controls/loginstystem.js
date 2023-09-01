@@ -8,6 +8,9 @@ const authRouter=express.Router()
 authRouter.post("/register",async(req,res)=>{
     const {email,password,name}=req.body
     const data=await loginmodel.findOne({email})
+    if(email&&password&&name){
+
+    
     if(data){
         res.status(400).json({msg:"This User is already registered"})
     }else{
@@ -26,11 +29,16 @@ authRouter.post("/register",async(req,res)=>{
         }catch(err){
 res.status(400).json({msg:err})
         }
+    }}else{
+        res.status(400).json({msg:"Please provide all the required details"})
     }
 })
 authRouter.post("/login",async(req,res)=>{
     const {email,password}=req.body
     const data=await loginmodel.findOne({email})
+    if(email&&password){
+
+    
     if(data){
         try{
             bcrypt.compare(password,data.password, function(err, result) {
@@ -47,6 +55,8 @@ res.status(400).json({msg:err})
         }
     }else{
         res.status(400).json({msg:"Not a Registered User"})
+    }}else{
+        res.status(400).json({msg:"Please provide all the required details"})
     }
 })
 module.exports={authRouter}
