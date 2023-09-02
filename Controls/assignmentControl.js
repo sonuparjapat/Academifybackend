@@ -1,6 +1,7 @@
 const express=require("express")
 const { instructerassignmentModel } = require("../Medels/instructerAssignment")
 const { studentProfileModel } = require("../Medels/studentProfileMoedel")
+const { studentassignemntModel } = require("../Medels/studentassignementMoel")
 const assignmentRouter=express.Router()
 
 assignmentRouter.post("/instructerassignment",async(req,res)=>{
@@ -78,6 +79,7 @@ assignmentRouter.patch("/patchassignment/:id",async(req,res)=>{
         res.status(400).json({msg:"something going wrong"})
     }
     })
+    // checking assignment submission of students by instructer
 
 
 
@@ -116,6 +118,38 @@ if(limit&&page){
 }
 
 
+})
+
+
+assignmentRouter.post("/submitassignment",async(req,res)=>{
+    // we have to provide assignmenId,link,instructerId
+
+    const newdata={...req.body,status:false}
+    const {assignmentId}=req.body
+    await studentassignemntModel.findOneAndDelete({"assignmentId":assignmentId})
+    try{
+        const data=new studentassignemntModel(newdata)
+        await data.save()
+        res.status(200).json({msg:"Assignment submitted successfully"})
+    }catch(err){
+        res.status(400).json({msg:"something going wrong"})
+    }
+})
+
+// status completion
+assignmentRouter.patch("/statuschange/:id",async(req,res)=>{
+    const {id}=req.params
+    const data=await studentassignemntModel.findOne({_id:id})
+    try{
+        if(req.body.userId==data.userId){
+            await studentProfileModel.findOneAndUpdate({_id:id},req.body)
+            res.status(200).json({msg:`assignment with id:${id} completed successfully`})
+        }else{
+            res.status(400).json({msg:"You are not authorised to do this task"})
+        }
+    }catch(err){
+        res.status(400).json({msg:"Something going wrong"})
+    }
 })
 
 
