@@ -5,11 +5,13 @@ const {connection}=require("./Medels/loginModel")
 const { authRouter } = require('./Controls/loginstystem')
 const {  profileRouter } = require('./Controls/controlsystem')
 const { studentProfileRouter } = require('./Controls/StudentProfile.control')
+const { assignmentRouter } = require('./Controls/assignmentControl')
 const app=express()
 app.use(cors())
 app.use(express.json())
 // ||||||||||||||||||||||||||||||||||||||||||||||
 app.use("/user",authRouter)
+app.use("/assignment",auth,assignmentRouter)
 
 app.use("/userdata",auth,profileRouter)
 app.listen(8080,async()=>{

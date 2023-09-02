@@ -1,7 +1,9 @@
 const express=require('express')
 const {  instructerProfileModel } = require('../Medels/instructerProfileModel')
 const { studentProfileModel } = require('../Medels/studentProfileMoedel')
+
 const profileRouter=express.Router()
+
 
 // instructer
 
