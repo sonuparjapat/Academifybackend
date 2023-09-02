@@ -56,6 +56,18 @@ profileRouter.get("/instructers",async(req,res)=>{
         }
     
 })
+// getting student which are enrolled in related field
+profileRouter.get("/fieldstudents",async(req,res)=>{
+    const {userId}=req.body
+    const data=await instructerProfileModel.findOne({"userId":userId})
+    const {department}=data
+    try{
+        const studentsdata=await studentProfileModel.find({"major":department})
+        res.status(200).json({msg:studentsdata})
+    }catch(err){
+        res.status(400).json({msg:"something going wrong"})
+    }
+})
 profileRouter.post("/instructerprofile",async(req,res)=>{
     const {email}=req.body
     const data=await instructerProfileModel.findOne({email})

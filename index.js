@@ -4,7 +4,7 @@ const {auth}=require("./Middleware/auth")
 const {connection}=require("./Medels/loginModel")
 const { authRouter } = require('./Controls/loginstystem')
 const {  profileRouter } = require('./Controls/controlsystem')
-const { studentProfileRouter } = require('./Controls/StudentProfile.control')
+
 const { assignmentRouter } = require('./Controls/assignmentControl')
 const app=express()
 app.use(cors())

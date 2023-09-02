@@ -1,15 +1,16 @@
 const express=require("express")
+const ObjectId = require('mongodb').ObjectId;
 const { instructerassignmentModel } = require("../Medels/instructerAssignment")
 const { studentProfileModel } = require("../Medels/studentProfileMoedel")
 const { studentassignemntModel } = require("../Medels/studentassignementMoel")
 const assignmentRouter=express.Router()
 
 assignmentRouter.post("/instructerassignment",async(req,res)=>{
-    
+    const newdata={...req.body,status:false}
  try{
-const data=new instructerassignmentModel(req.body)
+const data=new instructerassignmentModel(newdata)
 await data.save()
-res.status(400).json({msg:"You added a new assignment successfully"})
+res.status(200).json({msg:"You added a new assignment successfully"})
  }catch(err){
     res.status(400).json({msg:"something going wrong"})
  }
@@ -80,6 +81,32 @@ assignmentRouter.patch("/patchassignment/:id",async(req,res)=>{
     }
     })
     // checking assignment submission of students by instructer
+    assignmentRouter.get("/assignments/:studentId",async(req,res)=>{
+        const {studentId}=req.params
+        const {userId}=req.body
+        const completedassignmentdata=await studentassignemntModel.find({"userId":studentId,status:true})
+        const notcompletedassignmentdata=await instructerassignmentModel.find({ "userId":userId})
+//      
+        const completedAssignmentIds = completedassignmentdata.map(item => item.assignmentId);
+
+        const filteredNotCompletedAssignmentData = notcompletedassignmentdata.filter(item => {
+            return !completedAssignmentIds.some(id => id === item._id.toString());
+          });
+
+
+
+
+
+
+
+
+    try{
+        res.status(200).json({msg:"yourdata",completedassignmentdata,filteredNotCompletedAssignmentData})
+    }catch(err){
+        res.status(400).json({msg:"something going wrong"})
+    }
+       
+    })
 
 
 
@@ -95,7 +122,7 @@ if(date){
 if(name){
     myquery.name={ $regex: name, $options: "i" }
 }
-const userprofile=await studentProfileModel.findOne({"userId":userId})
+const userprofile=  studentProfileModel.findOne({"userId":userId})
 const studentfield=userprofile.major
 if(studentfield){
     myquery.type=studentfield
@@ -124,9 +151,21 @@ if(limit&&page){
 assignmentRouter.post("/submitassignment",async(req,res)=>{
     // we have to provide assignmenId,link,instructerId
 
-    const newdata={...req.body,status:false}
+    const newdata={...req.body,status:false,submissiondate:"",assignmentTime:""}
     const {assignmentId}=req.body
     await studentassignemntModel.findOneAndDelete({"assignmentId":assignmentId})
+
+
+    
+    
+
+
+
+
+
+
+
+
     try{
         const data=new studentassignemntModel(newdata)
         await data.save()
@@ -138,12 +177,59 @@ assignmentRouter.post("/submitassignment",async(req,res)=>{
 
 // status completion
 assignmentRouter.patch("/statuschange/:id",async(req,res)=>{
+
     const {id}=req.params
-    const data=await studentassignemntModel.findOne({_id:id})
+    const data=await studentassignemntModel.findOne({"_id":id})
+    const {assignmentId}=data
+    const instructerassignment=await instructerassignmentModel.findOne({_id:assignmentId})
+    const {deadline}=instructerassignment
+// Get the current date in "yyyy-mm-dd" format
+const currentDate = new Date();
+const year = currentDate.getFullYear();
+const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+const day = String(currentDate.getDate()).padStart(2, '0');
+const formattedCurrentDate = `${year}-${month}-${day}`;
+
+// Specify the submission date to compare (in "yyyy-mm-dd" format)
+
+
+// Compare the dates
+
+
+// console.log(formattedDate);
     try{
+
         if(req.body.userId==data.userId){
-            await studentProfileModel.findOneAndUpdate({_id:id},req.body)
-            res.status(200).json({msg:`assignment with id:${id} completed successfully`})
+            if (formattedCurrentDate < deadline) {
+                const newdata={...req.body,"submissiondate":formattedCurrentDate,"assignmentTime":"submitted on/before deadline",status:true}
+                await studentassignemntModel.findOneAndUpdate({_id:id},newdata)
+
+
+                res.status(200).json({msg:`assignment with id:${id} completed on/before time`})
+                // console.log('Assignment is not late.');
+
+            } else if (formattedCurrentDate > deadline) {
+                // console.log('Assignment is late.');
+                // Calculate how many milliseconds the assignment is late
+                const timeDifferenceMs = new Date(formattedCurrentDate) - new Date(deadline);
+                // Calculate how many days the assignment is late
+                const daysLate = Math.floor(timeDifferenceMs / (1000 * 60 * 60 * 24));
+                const newdata={...req.body,"submissiondate":formattedCurrentDate,"assignmentTime":`submitted  ${daysLate} days late`,status:true}
+                await studentassignemntModel.findOneAndUpdate({_id:id},newdata)
+
+
+                res.status(200).json({msg:`assignment  completed ${daysLate} days late`})
+                // console.log(`It is ${daysLate} days late.`);
+            } else {
+                const newdata={...req.body,"submissiondate":formattedCurrentDate,"assignmentTime":"submitted on time",status:true}
+                await studentassignemntModel.findOneAndUpdate({_id:id},newdata)
+
+
+                res.status(200).json({msg:`assignment with id:${id} completed on time`})
+            }
+
+
+        
         }else{
             res.status(400).json({msg:"You are not authorised to do this task"})
         }

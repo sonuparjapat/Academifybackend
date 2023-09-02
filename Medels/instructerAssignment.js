@@ -9,6 +9,7 @@ const instructerassignmentschema=mongoose.Schema({
     userId:String,
     link:String,
     date:String,
+    status:Boolean
 
 })
 
